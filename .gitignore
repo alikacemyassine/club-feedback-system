@@ -1,0 +1,8 @@
+node_modules/
+submissions.json
+.env
+.DS_Store
+*.log
+.vscode/
+.idea/
+

@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: club-feedback-system
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_USERNAME
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        generateValue: true
+

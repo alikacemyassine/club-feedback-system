@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Club Feedback</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .submissions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .submission-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+        
+        .submission-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .submission-info {
+            flex: 1;
+        }
+        
+        .submission-info h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .submission-meta {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .submission-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .submission-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-right: 3px solid #667eea;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .detail-value {
+            color: #666;
+            font-size: 14px;
+            word-break: break-word;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state h2 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+        
+        .rating-stars {
+            color: #ffc107;
+            font-size: 18px;
+        }
+        
+        .export-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>لوحة التحكم - Admin Panel</h1>
+            <p>عرض جميع استمارات التقييم / View All Feedback Submissions</p>
+        </div>
+        
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <h3 id="totalCount">0</h3>
+                <p>إجمالي الردود / Total Submissions</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="todayCount">0</h3>
+                <p>ردود اليوم / Today's Submissions</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="avgRating">0</h3>
+                <p>التقييم المتوسط / Average Rating</p>
+            </div>
+        </div>
+        
+        <div class="export-section">
+            <div class="controls">
+                <button class="btn btn-primary" onclick="loadSubmissions()">🔄 تحديث / Refresh</button>
+                <button class="btn btn-success" onclick="exportToCSV()">📥 تصدير CSV / Export CSV</button>
+                <button class="btn btn-success" onclick="exportToJSON()">📥 تصدير JSON / Export JSON</button>
+                <input type="text" class="search-box" id="searchBox" placeholder="بحث... / Search..." onkeyup="filterSubmissions()">
+            </div>
+        </div>
+        
+        <div id="submissionsContainer">
+            <div class="loading">جاري التحميل... / Loading...</div>
+        </div>
+    </div>
+
+    <script>
+        let allSubmissions = [];
+        
+        async function loadSubmissions() {
+            try {
+                const response = await fetch('/api/submissions', {
+                    credentials: 'include'
+                });
+                
+                if (response.status === 401) {
+                    document.getElementById('submissionsContainer').innerHTML = 
+                        '<div class="empty-state"><h2>🔒 يرجى إدخال بيانات الدخول / Please enter credentials</h2><p>الصفحة ستعيد التحميل تلقائياً / Page will reload automatically</p></div>';
+                    setTimeout(() => location.reload(), 2000);
+                    return;
+                }
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load submissions');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    allSubmissions = result.submissions;
+                    updateStats();
+                    displaySubmissions(allSubmissions);
+                } else {
+                    document.getElementById('submissionsContainer').innerHTML = 
+                        '<div class="empty-state"><h2>خطأ في تحميل البيانات</h2></div>';
+                }
+            } catch (error) {
+                console.error('Error loading submissions:', error);
+                document.getElementById('submissionsContainer').innerHTML = 
+                    '<div class="empty-state"><h2>خطأ في الاتصال / Connection Error</h2></div>';
+            }
+        }
+        
+        function updateStats() {
+            const total = allSubmissions.length;
+            const today = new Date().toDateString();
+            const todaySubmissions = allSubmissions.filter(s => 
+                new Date(s.timestamp).toDateString() === today
+            ).length;
+            
+            const ratings = allSubmissions
+                .filter(s => s.rating)
+                .map(s => parseInt(s.rating));
+            const avgRating = ratings.length > 0 
+                ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
+                : '0';
+            
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('todayCount').textContent = todaySubmissions;
+            document.getElementById('avgRating').textContent = avgRating;
+        }
+        
+        function displaySubmissions(submissions) {
+            const container = document.getElementById('submissionsContainer');
+            
+            if (submissions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h2>لا توجد ردود بعد / No submissions yet</h2><p>ستظهر الردود هنا عند إرسالها</p></div>';
+                return;
+            }
+            
+            container.innerHTML = submissions.map(submission => {
+                const date = new Date(submission.timestamp);
+                const dateStr = date.toLocaleString('ar-SA', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                const ratingStars = submission.rating 
+                    ? '⭐'.repeat(parseInt(submission.rating))
+                    : 'غير محدد / Not specified';
+                
+                return `
+                    <div class="submission-card" data-id="${submission.id}">
+                        <div class="submission-header">
+                            <div class="submission-info">
+                                <h3>${submission.fullName || 'غير محدد / Unknown'}</h3>
+                                <div class="submission-meta">
+                                    ${submission.department || ''} | ${submission.telegram || ''} | ${dateStr}
+                                </div>
+                            </div>
+                            <div class="submission-actions">
+                                <button class="btn btn-danger" onclick="deleteSubmission('${submission.id}')">🗑️ حذف / Delete</button>
+                            </div>
+                        </div>
+                        <div class="submission-details">
+                            ${submission.integration ? `<div class="detail-item">
+                                <div class="detail-label">الاندماج / Integration:</div>
+                                <div class="detail-value">${submission.integration}</div>
+                            </div>` : ''}
+                            ${submission.welcomed ? `<div class="detail-item">
+                                <div class="detail-label">الترحيب / Welcomed:</div>
+                                <div class="detail-value">${submission.welcomed}</div>
+                            </div>` : ''}
+                            ${submission.rating ? `<div class="detail-item">
+                                <div class="detail-label">التقييم / Rating:</div>
+                                <div class="detail-value"><span class="rating-stars">${ratingStars}</span> (${submission.rating}/5)</div>
+                            </div>` : ''}
+                            ${submission.hasProblems ? `<div class="detail-item">
+                                <div class="detail-label">مشاكل / Problems:</div>
+                                <div class="detail-value">${submission.hasProblems}</div>
+                            </div>` : ''}
+                            ${submission.ideas ? `<div class="detail-item" style="grid-column: 1 / -1;">
+                                <div class="detail-label">أفكار / Ideas:</div>
+                                <div class="detail-value">${submission.ideas}</div>
+                            </div>` : ''}
+                            ${submission.skills ? `<div class="detail-item" style="grid-column: 1 / -1;">
+                                <div class="detail-label">مهارات / Skills:</div>
+                                <div class="detail-value">${submission.skills}</div>
+                            </div>` : ''}
+                            ${submission.problemDetails ? `<div class="detail-item" style="grid-column: 1 / -1;">
+                                <div class="detail-label">تفاصيل المشاكل / Problem Details:</div>
+                                <div class="detail-value">${submission.problemDetails}</div>
+                            </div>` : ''}
+                            ${submission.otherComments ? `<div class="detail-item" style="grid-column: 1 / -1;">
+                                <div class="detail-label">ملاحظات أخرى / Other Comments:</div>
+                                <div class="detail-value">${submission.otherComments}</div>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function filterSubmissions() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const filtered = allSubmissions.filter(s => {
+                const searchable = [
+                    s.fullName,
+                    s.department,
+                    s.telegram,
+                    s.ideas,
+                    s.skills,
+                    s.problemDetails,
+                    s.otherComments
+                ].join(' ').toLowerCase();
+                return searchable.includes(searchTerm);
+            });
+            displaySubmissions(filtered);
+        }
+        
+        async function deleteSubmission(id) {
+            if (!confirm('هل أنت متأكد من الحذف؟ / Are you sure you want to delete?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/submissions/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                if (response.status === 401) {
+                    alert('🔒 يرجى إعادة تسجيل الدخول / Please re-authenticate');
+                    location.reload();
+                    return;
+                }
+                
+                if (response.ok) {
+                    loadSubmissions();
+                } else {
+                    alert('خطأ في الحذف / Error deleting');
+                }
+            } catch (error) {
+                console.error('Error deleting:', error);
+                alert('خطأ في الاتصال / Connection error');
+            }
+        }
+        
+        function exportToCSV() {
+            if (allSubmissions.length === 0) {
+                alert('لا توجد بيانات للتصدير / No data to export');
+                return;
+            }
+            
+            const headers = ['ID', 'Timestamp', 'Name', 'Department', 'Telegram', 'Integration', 'Welcomed', 'Rating', 'Has Problems', 'Ideas', 'Skills', 'Problem Details', 'Other Comments'];
+            const rows = allSubmissions.map(s => [
+                s.id,
+                s.timestamp,
+                s.fullName || '',
+                s.department || '',
+                s.telegram || '',
+                s.integration || '',
+                s.welcomed || '',
+                s.rating || '',
+                s.hasProblems || '',
+                (s.ideas || '').replace(/\n/g, ' '),
+                (s.skills || '').replace(/\n/g, ' '),
+                (s.problemDetails || '').replace(/\n/g, ' '),
+                (s.otherComments || '').replace(/\n/g, ' ')
+            ]);
+            
+            const csv = [headers, ...rows]
+                .map(row => row.map(cell => `"${cell}"`).join(','))
+                .join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `feedback_submissions_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+        
+        function exportToJSON() {
+            if (allSubmissions.length === 0) {
+                alert('لا توجد بيانات للتصدير / No data to export');
+                return;
+            }
+            
+            const json = JSON.stringify(allSubmissions, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `feedback_submissions_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+        
+        // Load submissions on page load
+        loadSubmissions();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadSubmissions, 30000);
+    </script>
+</body>
+</html>
+
