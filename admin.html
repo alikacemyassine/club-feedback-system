@@ -267,13 +267,14 @@
                 
                 if (response.status === 401) {
                     document.getElementById('submissionsContainer').innerHTML = 
-                        '<div class="empty-state"><h2>🔒 يرجى إدخال بيانات الدخول / Please enter credentials</h2><p>الصفحة ستعيد التحميل تلقائياً / Page will reload automatically</p></div>';
-                    setTimeout(() => location.reload(), 2000);
+                        '<div class="empty-state"><h2>🔒 يرجى إدخال بيانات الدخول / Please enter credentials</h2><p>إذا لم تظهر نافذة تسجيل الدخول، أعد تحميل الصفحة / If login window doesn\'t appear, reload the page</p><button class="btn btn-primary" onclick="location.reload()">إعادة التحميل / Reload</button></div>';
                     return;
                 }
                 
                 if (!response.ok) {
-                    throw new Error('Failed to load submissions');
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    throw new Error(`Failed to load submissions: ${response.status}`);
                 }
                 
                 const result = await response.json();
@@ -284,12 +285,12 @@
                     displaySubmissions(allSubmissions);
                 } else {
                     document.getElementById('submissionsContainer').innerHTML = 
-                        '<div class="empty-state"><h2>خطأ في تحميل البيانات</h2></div>';
+                        '<div class="empty-state"><h2>خطأ في تحميل البيانات / Error loading data</h2><p>' + (result.message || 'Unknown error') + '</p></div>';
                 }
             } catch (error) {
                 console.error('Error loading submissions:', error);
                 document.getElementById('submissionsContainer').innerHTML = 
-                    '<div class="empty-state"><h2>خطأ في الاتصال / Connection Error</h2></div>';
+                    '<div class="empty-state"><h2>خطأ في الاتصال / Connection Error</h2><p>' + error.message + '</p><button class="btn btn-primary" onclick="loadSubmissions()">إعادة المحاولة / Retry</button></div>';
             }
         }
         
@@ -502,7 +503,10 @@
         }
         
         // Load submissions on page load
-        loadSubmissions();
+        // Wait a bit to ensure page is fully loaded and auth is ready
+        setTimeout(() => {
+            loadSubmissions();
+        }, 500);
         
         // Auto-refresh every 30 seconds
         setInterval(loadSubmissions, 30000);
