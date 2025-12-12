@@ -312,6 +312,14 @@
             document.getElementById('avgRating').textContent = avgRating;
         }
         
+        // Escape HTML to prevent XSS attacks
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
         function displaySubmissions(submissions) {
             const container = document.getElementById('submissionsContainer');
             
@@ -334,51 +342,65 @@
                     ? '⭐'.repeat(parseInt(submission.rating))
                     : 'غير محدد / Not specified';
                 
+                // Escape all user input to prevent XSS
+                const safeId = escapeHtml(submission.id);
+                const safeFullName = escapeHtml(submission.fullName || 'غير محدد / Unknown');
+                const safeDepartment = escapeHtml(submission.department || '');
+                const safeTelegram = escapeHtml(submission.telegram || '');
+                const safeIntegration = submission.integration ? escapeHtml(submission.integration) : '';
+                const safeWelcomed = submission.welcomed ? escapeHtml(submission.welcomed) : '';
+                const safeRating = submission.rating ? escapeHtml(submission.rating) : '';
+                const safeHasProblems = submission.hasProblems ? escapeHtml(submission.hasProblems) : '';
+                const safeIdeas = submission.ideas ? escapeHtml(submission.ideas) : '';
+                const safeSkills = submission.skills ? escapeHtml(submission.skills) : '';
+                const safeProblemDetails = submission.problemDetails ? escapeHtml(submission.problemDetails) : '';
+                const safeOtherComments = submission.otherComments ? escapeHtml(submission.otherComments) : '';
+                
                 return `
-                    <div class="submission-card" data-id="${submission.id}">
+                    <div class="submission-card" data-id="${safeId}">
                         <div class="submission-header">
                             <div class="submission-info">
-                                <h3>${submission.fullName || 'غير محدد / Unknown'}</h3>
+                                <h3>${safeFullName}</h3>
                                 <div class="submission-meta">
-                                    ${submission.department || ''} | ${submission.telegram || ''} | ${dateStr}
+                                    ${safeDepartment} | ${safeTelegram} | ${dateStr}
                                 </div>
                             </div>
                             <div class="submission-actions">
-                                <button class="btn btn-danger" onclick="deleteSubmission('${submission.id}')">🗑️ حذف / Delete</button>
+                                <button class="btn btn-danger" onclick="deleteSubmission('${safeId}')">🗑️ حذف / Delete</button>
                             </div>
                         </div>
                         <div class="submission-details">
                             ${submission.integration ? `<div class="detail-item">
                                 <div class="detail-label">الاندماج / Integration:</div>
-                                <div class="detail-value">${submission.integration}</div>
+                                <div class="detail-value">${safeIntegration}</div>
                             </div>` : ''}
                             ${submission.welcomed ? `<div class="detail-item">
                                 <div class="detail-label">الترحيب / Welcomed:</div>
-                                <div class="detail-value">${submission.welcomed}</div>
+                                <div class="detail-value">${safeWelcomed}</div>
                             </div>` : ''}
                             ${submission.rating ? `<div class="detail-item">
                                 <div class="detail-label">التقييم / Rating:</div>
-                                <div class="detail-value"><span class="rating-stars">${ratingStars}</span> (${submission.rating}/5)</div>
+                                <div class="detail-value"><span class="rating-stars">${ratingStars}</span> (${safeRating}/5)</div>
                             </div>` : ''}
                             ${submission.hasProblems ? `<div class="detail-item">
                                 <div class="detail-label">مشاكل / Problems:</div>
-                                <div class="detail-value">${submission.hasProblems}</div>
+                                <div class="detail-value">${safeHasProblems}</div>
                             </div>` : ''}
                             ${submission.ideas ? `<div class="detail-item" style="grid-column: 1 / -1;">
                                 <div class="detail-label">أفكار / Ideas:</div>
-                                <div class="detail-value">${submission.ideas}</div>
+                                <div class="detail-value">${safeIdeas}</div>
                             </div>` : ''}
                             ${submission.skills ? `<div class="detail-item" style="grid-column: 1 / -1;">
                                 <div class="detail-label">مهارات / Skills:</div>
-                                <div class="detail-value">${submission.skills}</div>
+                                <div class="detail-value">${safeSkills}</div>
                             </div>` : ''}
                             ${submission.problemDetails ? `<div class="detail-item" style="grid-column: 1 / -1;">
                                 <div class="detail-label">تفاصيل المشاكل / Problem Details:</div>
-                                <div class="detail-value">${submission.problemDetails}</div>
+                                <div class="detail-value">${safeProblemDetails}</div>
                             </div>` : ''}
                             ${submission.otherComments ? `<div class="detail-item" style="grid-column: 1 / -1;">
                                 <div class="detail-label">ملاحظات أخرى / Other Comments:</div>
-                                <div class="detail-value">${submission.otherComments}</div>
+                                <div class="detail-value">${safeOtherComments}</div>
                             </div>` : ''}
                         </div>
                     </div>
