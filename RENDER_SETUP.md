@@ -5,7 +5,7 @@ Your code is now updated to use MongoDB! Just need to add the connection string 
 ## Your MongoDB Connection String
 
 ```
-mongodb+srv://feedback-admin:pewdiepie1@club-feedback.jayleav.mongodb.net/club_feedback?retryWrites=true&w=majority
+mongodb+srv://feedback-admin:JRvCrIFFdZBLEbdb@club-feedback.jayleav.mongodb.net/club_feedback?retryWrites=true&w=majority
 ```
 
 ## Steps to Add to Render
@@ -20,7 +20,7 @@ mongodb+srv://feedback-admin:pewdiepie1@club-feedback.jayleav.mongodb.net/club_f
 3. Click **"Add Environment Variable"**
 4. Enter:
    - **Key**: `MONGODB_URI`
-   - **Value**: `mongodb+srv://feedback-admin:pewdiepie1@club-feedback.jayleav.mongodb.net/club_feedback?retryWrites=true&w=majority`
+   - **Value**: `mongodb+srv://feedback-admin:JRvCrIFFdZBLEbdb@club-feedback.jayleav.mongodb.net/club_feedback?retryWrites=true&w=majority`
 5. Click **"Save Changes"**
 
 ### 3. Push Updated Code

@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection - Your connection string with password
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://feedback-admin:pewdiepie1@club-feedback.jayleav.mongodb.net/club_feedback?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://feedback-admin:JRvCrIFFdZBLEbdb@club-feedback.jayleav.mongodb.net/club_feedback?retryWrites=true&w=majority';
 const DB_NAME = 'club_feedback';
 const COLLECTION_NAME = 'submissions';
 
