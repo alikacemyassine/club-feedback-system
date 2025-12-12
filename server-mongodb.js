@@ -6,8 +6,8 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// MongoDB connection - Your connection string with password
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://feedback-admin:pewdiepie1@club-feedback.jayleav.mongodb.net/club_feedback?retryWrites=true&w=majority';
+// MongoDB connection
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const DB_NAME = 'club_feedback';
 const COLLECTION_NAME = 'submissions';
 
@@ -188,6 +188,11 @@ async function startServer() {
             console.warn('⚠️  Set ADMIN_PASSWORD environment variable before deploying!');
         }
         
+        if (MONGODB_URI === 'mongodb://localhost:27017') {
+            console.warn('⚠️  WARNING: Using default MongoDB URI!');
+            console.warn('⚠️  Set MONGODB_URI environment variable with your MongoDB Atlas connection string!');
+        }
+        
         app.listen(PORT, () => {
             console.log(`🚀 Server running on http://localhost:${PORT}`);
             console.log(`📝 Feedback form: http://localhost:${PORT}/`);
@@ -210,3 +215,4 @@ process.on('SIGTERM', async () => {
 });
 
 startServer().catch(console.error);
+
