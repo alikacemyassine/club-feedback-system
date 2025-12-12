@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const DB_NAME = 'club_feedback';
+const DB_NAME = 'yassine';
 const COLLECTION_NAME = 'submissions';
 
 let db;
